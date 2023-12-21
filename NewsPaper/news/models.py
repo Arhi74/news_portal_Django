@@ -1,8 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Author(models.Model):
-    pass
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
 
 
 class Category(models.Model):
@@ -10,12 +12,31 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    pass
+    article = 'Article'
+    news = 'News'
+
+    POSITIONS = [
+        (article, 'Статья'),
+        (news, 'Новость')
+    ]
+
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    position = models.CharField(max_length=255, choices=POSITIONS, default=news)
+    datetime = models.DateTimeField(auto_now_add=True)
+    category = models.ManyToManyField(Category, through='PostCategory')
+    header = models.CharField(max_length=255)
+    text = models.TextField(default='')
+    rating = models.IntegerField(default=0)
 
 
 class PostCategory(models.Model):
-    pass
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Comment(models.Model):
-    pass
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(default='')
+    datetime = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(default=0)
