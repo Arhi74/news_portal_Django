@@ -1,21 +1,21 @@
 from django.db import models
 
 
-class Author(models.model):
+class Author(models.Model):
     pass
 
 
-class Category(models.model):
+class Category(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+
+class Post(models.Model):
     pass
 
 
-class Post(models.model):
+class PostCategory(models.Model):
     pass
 
 
-class PostCategory(models.model):
-    pass
-
-
-class Comment(models.model):
+class Comment(models.Model):
     pass
