@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+New
+{% endblock title %}
+
+{% block content %}
+<p><strong>{{ post.header }}</strong></p>
+<hr>
+<p>{{ post.text }}</p>
+<p>{{ post.datetime|date:'d.m.y' }}</p>
+{% endblock content %}
