@@ -14,7 +14,6 @@ def censor(value):
             bad_len = len(bad_word)
             index = word.lower().find(bad_word)
             if index != -1:
-                print(word, bad_word, index)
                 new_split_string.append(word[:index] + '*' * bad_len + word[index + bad_len:])
                 break
         else:
