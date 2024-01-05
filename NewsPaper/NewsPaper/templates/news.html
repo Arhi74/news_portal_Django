@@ -7,8 +7,12 @@ News
 {% endblock title %}
 
 {% block content %}
-   <h1>Все новости</h1>
-   <a href="{% url 'post_search'%}">Поиск</a>
+    <h1>Все новости</h1>
+    <a href="{% url 'post_search'%}">Поиск</a>
+    <p>
+    <a href="{% url 'news_create'%}">Добавить новость</a>
+    <a href="{% url 'articles_create'%}">Добавить статью</a>
+    </p>
    <hr>
    {% if news %}
        <table align="center" width= 100%>

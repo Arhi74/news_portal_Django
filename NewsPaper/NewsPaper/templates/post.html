@@ -2,7 +2,7 @@
 {% load custom_filters %}
 
 {% block title %}
-New
+Post
 {% endblock title %}
 
 {% block content %}
@@ -10,4 +10,12 @@ New
 <hr>
 <p>{{ post.text|censor }}</p>
 <p>{{ post.datetime|date:'d.m.y' }}</p>
+{% if post.position == "News" %}
+    <a href="{% url 'news_update' post.pk%}">Редактировать новость</a>
+    <a href="{% url 'news_delete' post.pk%}">Удалить новость</a>
+{% else %}
+    <a href="{% url 'articles_update' post.pk%}">Редактировать статью</a>
+    <a href="{% url 'articles_delete' post.pk%}">Удалить статью</a>
+{% endif %}
+<p><a href="{% url 'post_list'%}">К списку новостей</a></p>
 {% endblock content %}
