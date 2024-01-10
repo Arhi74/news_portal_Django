@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
@@ -51,7 +52,7 @@ class NewsCreate(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdate(UpdateView):
+class NewsUpdate(UpdateView, LoginRequiredMixin):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -79,7 +80,7 @@ class ArticlesCreate(CreateView):
         return super().form_valid(form)
 
 
-class ArticlesUpdate(UpdateView):
+class ArticlesUpdate(UpdateView, LoginRequiredMixin):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
