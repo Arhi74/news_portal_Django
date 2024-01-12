@@ -1,12 +1,24 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
 from .filters import PostFilter
 from .forms import PostForm
 from django.contrib.auth.models import User
-from .forms import BaseRegisterForm
-from django.contrib.auth.views import LogoutView
+from .forms import BasicSignupForm
+from django.shortcuts import redirect
+from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def upgrade_me(request):
+    user = request.user
+    premium_group = Group.objects.get(name='authors')
+    if not request.user.groups.filter(name='authors').exists():
+        premium_group.user_set.add(user)
+    return redirect('/')
 
 
 class PostList(ListView):
@@ -21,11 +33,21 @@ class PostList(ListView):
         self.filterset = PostFilter(self.request.GET, queryset)
         return self.filterset.qs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
+        return context
+
 
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
+        return context
 
 
 class PostSearch(ListView):
@@ -41,10 +63,13 @@ class PostSearch(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
+        context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
         return context
 
 
-class NewsCreate(CreateView):
+@method_decorator(login_required, name='dispatch')
+class NewsCreate(PermissionRequiredMixin, CreateView):
+    permission_required = 'news.add_post'
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -55,7 +80,9 @@ class NewsCreate(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdate(UpdateView, LoginRequiredMixin):
+@method_decorator(login_required, name='dispatch')
+class NewsUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = 'news.change_post'
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -66,13 +93,17 @@ class NewsUpdate(UpdateView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class NewsDelete(DeleteView):
+@method_decorator(login_required, name='dispatch')
+class NewsDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = 'news.delete_post'
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
 
 
-class ArticlesCreate(CreateView):
+@method_decorator(login_required, name='dispatch')
+class ArticlesCreate(PermissionRequiredMixin, CreateView):
+    permission_required = 'news.add_post'
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -83,7 +114,9 @@ class ArticlesCreate(CreateView):
         return super().form_valid(form)
 
 
-class ArticlesUpdate(UpdateView, LoginRequiredMixin):
+@method_decorator(login_required, name='dispatch')
+class ArticlesUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = 'news.change_post'
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -94,7 +127,9 @@ class ArticlesUpdate(UpdateView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class ArticlesDelete(DeleteView):
+@method_decorator(login_required, name='dispatch')
+class ArticlesDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = 'news.delete_post'
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
@@ -102,9 +137,5 @@ class ArticlesDelete(DeleteView):
 
 class BaseRegisterView(CreateView):
     model = User
-    form_class = BaseRegisterForm
-    success_url = '/'
-
-
-class CustomLogoutView(LogoutView):
+    form_class = BasicSignupForm
     success_url = '/'
