@@ -4,6 +4,9 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post
 from .filters import PostFilter
 from .forms import PostForm
+from django.contrib.auth.models import User
+from .forms import BaseRegisterForm
+from django.contrib.auth.views import LogoutView
 
 
 class PostList(ListView):
@@ -95,3 +98,13 @@ class ArticlesDelete(DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
+
+
+class BaseRegisterView(CreateView):
+    model = User
+    form_class = BaseRegisterForm
+    success_url = '/'
+
+
+class CustomLogoutView(LogoutView):
+    success_url = '/'
