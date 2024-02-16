@@ -7,14 +7,19 @@ News
 {% endblock title %}
 
 {% block content %}
-    <h1>Все новости</h1>
+    <h1>Новости по категории "{{category}}"</h1>
     <a href="{% url 'post_search'%}">Поиск</a>
     <p>
     <a href="{% url 'news_create'%}">Добавить новость</a>
     <a href="{% url 'articles_create'%}">Добавить статью</a>
     </p>
+    {% if is_not_subscriber%}
+    <p class="text-center">
+        <a href="{% url 'subscribe' category.id %}" class="btn btn-secondary brn-sn">Подписаться</a>
+    </p>
+    {% endif %}
    <hr>
-   {% if news %}
+   {% if category_news_list %}
        <table align="center" width= 100%>
            <tr>
                <td>Заголовок</td>
@@ -22,8 +27,8 @@ News
                <td>Дата публикации</td>
                <td>Текст</td>
            </tr>
-          
-           {% for post in news %}
+
+           {% for post in category_news_list %}
            <tr>
                <td>
                    <a href="{% url 'post_detail' post.pk %}">{{ post.header|censor }}</a>
@@ -41,7 +46,6 @@ News
                </td>
            </tr>
            {% endfor %}
-
        </table>
    {% else %}
        <h2>Новостей нет!</h2>
