@@ -163,9 +163,18 @@ EMAIL_HOST_USER = os.getenv('e_host_user')
 EMAIL_HOST_PASSWORD = os.getenv('e_host_pass')
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv('default_email')
+REDIS_ENDPOINT = os.getenv('redis_endpoint')
+REDIS_PORT = os.getenv('redis_port')
+REDIS_PASS = os.getenv('redis_pass')
 
 # формат даты, которую будет воспринимать наш задачник (вспоминаем модуль по фильтрам)
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 # если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+CELERY_BROKER_URL = os.getenv('celery_url')
+CELERY_RESULT_BACKEND = os.getenv('celery_url')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
